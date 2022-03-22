@@ -19,10 +19,7 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private String imagePath;
-
-
     public Image(String s) {
         this.imagePath = s;
     }

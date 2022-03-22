@@ -17,8 +17,6 @@ public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private Boolean isAvailable;
-
     private Integer count;
 }

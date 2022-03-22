@@ -16,7 +16,6 @@ public class Description {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-
     private String comment;
 
 }

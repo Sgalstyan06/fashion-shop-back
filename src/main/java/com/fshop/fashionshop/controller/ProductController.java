@@ -28,7 +28,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAll());
     }
 
-
     @PostMapping
     ResponseEntity<Product> create(@RequestBody Product product) {
         if (!ProductValidator.validateCreateProduct(product)) {

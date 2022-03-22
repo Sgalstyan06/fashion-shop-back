@@ -18,7 +18,6 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-
     @GetMapping("/{id}")
     Order getById(@PathVariable long id) {
         return orderService.getById(id);
@@ -29,12 +28,10 @@ public class OrderController {
         return orderService.getAll();
     }
 
-
     @PostMapping
     Order create(Order order) {
         return null;
     }
-
 
     @PutMapping("/{id}")
     Order update(@PathVariable long id, OrderUpdateReqDto reqDto) {
