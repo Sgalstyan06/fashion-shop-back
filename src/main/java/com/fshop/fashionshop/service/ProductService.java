@@ -12,7 +12,7 @@ public interface ProductService {
 
     List<Product> getAll();
 
-    Product update(long id, Object product);
+    Product update(long id, Product product);
 
     void delete(long id);
 }

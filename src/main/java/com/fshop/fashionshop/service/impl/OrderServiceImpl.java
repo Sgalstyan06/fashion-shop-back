@@ -23,41 +23,27 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order create(Order order) {
-        return null;
+        return orderRepository.save(order);
     }
-
 
     @Override
-    public Order getById(long id) {
+    public List<Order> getAllById(String id) {
         return orderRepository
-                .findById(id)
+                .getAllByUserId(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "product with id:" + id + "  not found in database")
+                        "Orders with user_id:" + id + "  not found in database")
                 );
     }
-
 
     @Override
     public List<Order> getAll() {
         return orderRepository.findAll();
     }
 
-
-    @Transactional
     @Override
-    public Order update(long id, OrderUpdateReqDto reqDto) {
-        Order fromDb = orderRepository
-                .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "product with id:" + id + "  not found in database")
-                );
-        fromDb.setCount(reqDto.getCount());
-        fromDb.setOrderStatus(reqDto.getOrderStatus());
-
-        return fromDb;
-
+    public Order update(String id, OrderUpdateReqDto order) {
+        return null;
     }
 
     @Override

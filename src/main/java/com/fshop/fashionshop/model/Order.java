@@ -16,7 +16,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-
     private Long date;
 
     private Integer count;

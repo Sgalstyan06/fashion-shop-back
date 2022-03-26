@@ -10,11 +10,11 @@ public interface OrderService {
 
     Order create(Order order);
 
-    Order getById(long id);
+    List<Order> getAllById(String id);
 
     List<Order> getAll();
 
-    Order update(long id, OrderUpdateReqDto order);
+    Order update(String id, OrderUpdateReqDto order);
 
     void delete(long id);
 }

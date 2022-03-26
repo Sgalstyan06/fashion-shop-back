@@ -7,7 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.List;
 
@@ -19,21 +21,12 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    /***
-     *
-     * @param product the product that would be added in DB
-     * @return new product which has added
-     */
+
     @Override
     public Product create(Product product) {
         return productRepository.save(product);
     }
 
-    /***
-     *
-     * @param id with the help of it will find the object from DB.
-     * @return returns founded object or throws @ResponseStatusException(BAD_REQUEST).
-     */
     @Override
     public Product getById(long id) {
         return productRepository
@@ -44,23 +37,29 @@ public class ProductServiceImpl implements ProductService {
                 );
     }
 
-    /***
-     *
-     * @return all data from DB, if there is not any data will return empty List.
-     */
     @Override
     public List<Product> getAll() {
-        return productRepository
-                .findAll();
+        return productRepository.findAll();
     }
-
+    @Transactional
     @Override
-    public Product update(long id, Object product) {
-        return null;
+    public Product update(long id, Product product) {
+        Product fromDb = productRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "product with id:" + id + "  not found in database")
+                );
+        fromDb.setName(product.getName());
+        fromDb.setPrice(product.getPrice());
+        fromDb.setCurrency(product.getCurrency());
+        fromDb.setDescription(product.getDescription());
+        fromDb.setStock(product.getStock());
+        return fromDb;
     }
 
     @Override
     public void delete(long id) {
-
+        productRepository.deleteById(id);
     }
 }
