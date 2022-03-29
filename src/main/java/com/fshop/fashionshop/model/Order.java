@@ -1,6 +1,7 @@
 package com.fshop.fashionshop.model;
 
 import com.fshop.fashionshop.model.commons.enums.OrderStatus;
+import com.fshop.fashionshop.model.commons.enums.PaymentMethod;
 import lombok.Data;
 import lombok.ToString;
 
@@ -29,4 +30,11 @@ public class Order {
 
     @ManyToOne
     private User user;
+
+    private String address;
+
+    private String phone;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
 }
