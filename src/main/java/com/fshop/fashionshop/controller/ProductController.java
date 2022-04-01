@@ -1,6 +1,7 @@
 package com.fshop.fashionshop.controller;
 
 import com.fshop.fashionshop.model.Product;
+import com.fshop.fashionshop.service.ImageService;
 import com.fshop.fashionshop.service.ProductService;
 import com.fshop.fashionshop.validation.ProductValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,9 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ImageService imageService;
 
     @GetMapping("/{id}")
     ResponseEntity<Product> getById(@PathVariable long id) {
