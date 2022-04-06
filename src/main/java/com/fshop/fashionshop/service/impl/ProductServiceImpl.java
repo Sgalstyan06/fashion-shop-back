@@ -24,6 +24,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product create(Product product) {
+
         return productRepository.save(product);
     }
 
@@ -39,8 +40,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getAll() {
+
         return productRepository.findAll();
     }
+
     @Transactional
     @Override
     public Product update(long id, Product product) {

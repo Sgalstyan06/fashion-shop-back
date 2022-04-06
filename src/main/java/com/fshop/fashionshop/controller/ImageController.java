@@ -1,5 +1,7 @@
 package com.fshop.fashionshop.controller;
 
+import com.fshop.fashionshop.model.commons.Image;
+import com.fshop.fashionshop.model.dto.responseDto.ResponseDto;
 import com.fshop.fashionshop.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -28,6 +30,14 @@ public class ImageController {
                 .ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(imageService.readAllByProductId(productId,img_id));
+    }
+
+    @PutMapping("/update/{product_id}")
+    ResponseEntity<ResponseDto> update(@PathVariable("product_id") long productId, @RequestParam("image") MultipartFile[] images){
+        Image updated = imageService.update(productId, images);
+        ResponseDto responseDto=new ResponseDto("images updated.");
+        responseDto.addInfo("productId", String.valueOf(productId));
+        return ResponseEntity.ok(responseDto);
     }
 
 }

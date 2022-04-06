@@ -2,6 +2,7 @@ package com.fshop.fashionshop.service.impl;
 
 import com.fshop.fashionshop.model.Product;
 import com.fshop.fashionshop.model.commons.Image;
+import com.fshop.fashionshop.repository.ImageRepository;
 import com.fshop.fashionshop.service.ImageService;
 import com.fshop.fashionshop.service.ProductService;
 import com.fshop.fashionshop.util.FileDatasource;
@@ -29,7 +30,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
     @Autowired
-    ProductService productService;
+    private ProductService productService;
+
+    @Autowired
+    private ImageRepository imageRepository;
 
     @Override
     @Transactional
@@ -81,10 +85,43 @@ public class ImageServiceImpl implements ImageService {
 
     }
 
+    @Transactional
     @Override
-    public Image update(MultipartFile file) {
+    public Image update(long productId, MultipartFile[] images) {
+        Product fromDb = productService.getById(productId);
+        FileDatasource fileDatasource = new FileDatasource();
+        fileDatasource.deleteProductFolderByFolderName(generateFolderName(fromDb));
+        String productFolder = fileDatasource.createProductFolder(generateFolderName(fromDb));
+        List<Image> img = fromDb.getImg();
+        for (Image image : img) {
+            imageRepository.deleteById(image.getId());
+        }
+        fromDb.setImg(new LinkedList<>());
+
+        List<Image> imagesForDb = new LinkedList<>();
+
+
+        for (MultipartFile image : images) {
+
+            String fileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
+            Path uploadDirectory = Paths.get(productFolder);
+            String imagePath = productFolder + File.separator + fileName;
+            imagesForDb.add(new Image(imagePath));
+            try (InputStream inputStream = image.getInputStream()) {
+                Path filePath = uploadDirectory.resolve(fileName);
+                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                try {
+                    throw new IOException(" Error saving upload file" + fileName, e);
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        }
+        fromDb.getImg().addAll(imagesForDb);
         return null;
     }
+
 
     @Override
     public void delete(MultipartFile file) {

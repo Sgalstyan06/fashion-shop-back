@@ -11,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class FashionShopApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(FashionShopApplication.class, args);
     }
     @Bean

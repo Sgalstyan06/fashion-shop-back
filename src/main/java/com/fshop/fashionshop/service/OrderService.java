@@ -1,7 +1,7 @@
 package com.fshop.fashionshop.service;
 
 import com.fshop.fashionshop.model.Order;
-import com.fshop.fashionshop.model.Product;
+import com.fshop.fashionshop.model.commons.enums.OrderStatus;
 import com.fshop.fashionshop.model.dto.requestDto.OrderUpdateReqDto;
 
 import java.util.List;
@@ -14,7 +14,10 @@ public interface OrderService {
 
     List<Order> getAll();
 
-    Order update(String id, OrderUpdateReqDto order);
+//    Order update(String id, OrderUpdateReqDto order);
 
     void delete(long id);
+    List<Order> getOrderByStatus(String userId, OrderStatus orderStatus);
+
+    void changeStatus(Long orderId, OrderStatus orderStatus);
 }

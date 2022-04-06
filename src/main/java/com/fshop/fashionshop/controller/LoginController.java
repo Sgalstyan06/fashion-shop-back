@@ -1,6 +1,7 @@
 package com.fshop.fashionshop.controller;
 
 import com.fshop.fashionshop.model.User;
+import com.fshop.fashionshop.model.dto.responseDto.ResponseDto;
 import com.fshop.fashionshop.service.UserService;
 import com.fshop.fashionshop.validation.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class LoginController {
     private UserService userService;
 
     @PostMapping("/signup")
-    ResponseEntity<User> signUp(@RequestBody User user) {
+    ResponseEntity<ResponseDto> signUp(@RequestBody User user) {
 
 
         if (!UserValidator.checkUserSignUp(user)) {
@@ -28,6 +29,9 @@ public class LoginController {
                     "user data is invalid to signUp"
             );
         }
-        return ResponseEntity.ok(userService.create(user));
+        User user1 = userService.create(user);
+        ResponseDto responseDto=new ResponseDto("User is log in");
+        responseDto.addInfo("UserId", String.valueOf(user));
+        return ResponseEntity.ok(responseDto);
     }
 }

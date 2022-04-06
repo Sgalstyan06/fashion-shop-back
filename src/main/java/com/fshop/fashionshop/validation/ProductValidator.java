@@ -7,12 +7,15 @@ import com.fshop.fashionshop.validation.commons.StockValidator;
 
 public final class ProductValidator {
     public static boolean validateUpdateProduct(Product product) {
-        ImageValidator.checkDefaultImage(product);
+        //ImageValidator.checkDefaultImage(product);
 
-        return product.getName().length() != 0 &&
-                product.getPrice() >= 0 &&
-                StockValidator.validateStock(product.getStock()) &&
-                DescriptionValidator.validateDescription(product.getDescription());
+        if (product.getName().length() == 0 ||
+                product.getPrice() < 0 ||
+                !StockValidator.validateStock(product.getStock()) ||
+                !DescriptionValidator.validateDescription(product.getDescription())) {
+            return false;
+        }
+        return true;
 
     }
 

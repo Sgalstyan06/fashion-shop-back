@@ -1,6 +1,7 @@
 package com.fshop.fashionshop.service.impl;
 
 import com.fshop.fashionshop.model.Order;
+import com.fshop.fashionshop.model.commons.enums.OrderStatus;
 import com.fshop.fashionshop.model.dto.requestDto.OrderUpdateReqDto;
 import com.fshop.fashionshop.repository.OrderRepository;
 import com.fshop.fashionshop.service.OrderService;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order create(Order order) {
+
         return orderRepository.save(order);
     }
 
@@ -38,16 +41,35 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAll() {
+
         return orderRepository.findAll();
     }
 
-    @Override
-    public Order update(String id, OrderUpdateReqDto order) {
-        return null;
-    }
+//    @Override
+//    public Order update(String id, OrderUpdateReqDto order) {
+//        return null;
+//    }
 
     @Override
     public void delete(long id) {
-
+        orderRepository.deleteById(id);
     }
+
+    @Override
+    public List<Order> getOrderByStatus(String userId, OrderStatus orderStatus) {
+        return getAllById(userId).stream()
+                .filter(item->item.getOrderStatus()==orderStatus)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void changeStatus(Long orderId, OrderStatus orderStatus) {
+        Order fromDb = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Order with id:" + orderId + "  not found in database"));
+        fromDb.setOrderStatus(orderStatus);
+    }
+
+
 }

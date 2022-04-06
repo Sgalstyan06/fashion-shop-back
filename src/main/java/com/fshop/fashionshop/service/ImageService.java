@@ -12,7 +12,7 @@ public interface ImageService {
 
     byte[] readAllByProductId(long productId, long imgId) throws IOException;
 
-    Image update(MultipartFile file);
+    Image update(long productId,MultipartFile[] images);
 
     void delete(MultipartFile file);
 }
