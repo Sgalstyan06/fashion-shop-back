@@ -23,13 +23,18 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @GetMapping("get-all")
+    ResponseEntity<List<Order>> getAll() {
+        return ResponseEntity.ok(orderService.getAll());
+    }
+
     @GetMapping("/user-order")
-    ResponseEntity<List<Order>> getOrdersByUserId(@RequestHeader("user_id") String userId) {
+    ResponseEntity<List<Order>> getOrdersByUserId(@RequestHeader String userId) {
 
         if (!UserValidator.checkUserAuthorized(userId)) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    "user is UNAUTHORIZED, plz SignUp at first"
+                    "user is UNAUTHORIZED, please SignUp at first"
             );
         }
         return ResponseEntity.ok(orderService.getAllById(userId));
@@ -37,11 +42,12 @@ public class OrderController {
     }
 
     @GetMapping("/order-status")
-    ResponseEntity<List<Order>> getOrderByStatus(@RequestHeader("user_id") String userId, @RequestHeader("status") OrderStatus orderStatus){
+    ResponseEntity<List<Order>> getOrderByStatus(@RequestHeader String userId,
+                                                 @RequestHeader("status") OrderStatus orderStatus){
         if (!UserValidator.checkUserAuthorized(userId)) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    "user is UNAUTHORIZED, plz SignUp at first"
+                    "user is UNAUTHORIZED, please SignUp at first"
             );
         }
 
@@ -49,8 +55,9 @@ public class OrderController {
     }
 
     @PostMapping
-    ResponseEntity<ResponseDto> create(@RequestBody Order order) {
-        if (!OrderValidator.validateOrder(order)) {
+    ResponseEntity<ResponseDto> create(@RequestBody Order order,
+                                       @RequestHeader String userId) {
+        if (!OrderValidator.validateOrder(order, userId)) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Invalid order Structure for accepting Order"
@@ -69,7 +76,7 @@ public class OrderController {
         if (!UserValidator.checkUserAuthorized(userId)) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    "user is UNAUTHORIZED, plz SignUp at first"
+                    "user is UNAUTHORIZED, please SignUp at first"
             );
         }
         orderService.changeStatus(orderId, orderStatus);
@@ -78,10 +85,17 @@ public class OrderController {
         return ResponseEntity.ok(responseDto);
     }
 
-    @DeleteMapping("/{order_id}")
-    ResponseEntity<ResponseDto> delete(@PathVariable("order_id") Long id) {
+    @DeleteMapping("/{idOrder}")
+    ResponseEntity<ResponseDto> delete(@PathVariable("idOrder") Long id,
+                                       @RequestHeader String userId) {
+        if (!UserValidator.checkUserAuthorized(userId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "user is unauthorized, please sign in first:"
+            );
+        }
         orderService.delete(id);
-        ResponseDto responseDto = new ResponseDto("Order GBRSH.");
+        ResponseDto responseDto = new ResponseDto("Order deleted.");
         responseDto.addInfo("OrderId", String.valueOf(id));
         return ResponseEntity.ok(responseDto);
     }

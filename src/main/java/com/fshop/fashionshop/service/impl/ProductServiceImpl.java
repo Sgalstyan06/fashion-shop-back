@@ -44,25 +44,26 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll();
     }
 
-    @Transactional
+
     @Override
-    public Product update(long id, Product product) {
-        Product fromDb = productRepository
-                .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "product with id:" + id + "  not found in database")
-                );
-        fromDb.setName(product.getName());
-        fromDb.setPrice(product.getPrice());
-        fromDb.setCurrency(product.getCurrency());
-        fromDb.setDescription(product.getDescription());
-        fromDb.setStock(product.getStock());
-        return fromDb;
+    @Transactional
+    public Product update(Product product, long id) {
+        Product dbProduct = productRepository.findById(id).orElseThrow(()->{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "product with id:" + id + "  not found in database");
+        });
+        dbProduct.setName(product.getName());
+        dbProduct.setPrice(product.getPrice());
+        dbProduct.setStock(product.getStock());
+//        dbProduct.setImg(product.getImg());//???????????
+        dbProduct.setCurrency(product.getCurrency());
+        dbProduct.setDescription(product.getDescription());
+        return  dbProduct;
     }
 
     @Override
     public void delete(long id) {
+
         productRepository.deleteById(id);
     }
 }

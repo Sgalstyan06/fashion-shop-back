@@ -15,6 +15,7 @@ public final class UserValidator {
 
     @PostConstruct
     public void init() {
+
         UserValidator.userService = userServiceT;
     }
 

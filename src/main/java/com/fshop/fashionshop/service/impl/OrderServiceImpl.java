@@ -2,7 +2,6 @@ package com.fshop.fashionshop.service.impl;
 
 import com.fshop.fashionshop.model.Order;
 import com.fshop.fashionshop.model.commons.enums.OrderStatus;
-import com.fshop.fashionshop.model.dto.requestDto.OrderUpdateReqDto;
 import com.fshop.fashionshop.repository.OrderRepository;
 import com.fshop.fashionshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -41,17 +40,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAll() {
-
         return orderRepository.findAll();
     }
 
-//    @Override
-//    public Order update(String id, OrderUpdateReqDto order) {
-//        return null;
-//    }
 
     @Override
-    public void delete(long id) {
+    public void delete(Long id) {
+
         orderRepository.deleteById(id);
     }
 

@@ -1,6 +1,7 @@
 package com.fshop.fashionshop.controller;
 
 import com.fshop.fashionshop.model.Product;
+import com.fshop.fashionshop.model.dto.responseDto.ResponseDto;
 import com.fshop.fashionshop.service.ImageService;
 import com.fshop.fashionshop.service.ProductService;
 import com.fshop.fashionshop.validation.ProductValidator;
@@ -24,40 +25,60 @@ public class ProductController {
 
     @GetMapping("/{id}")
     ResponseEntity<Product> getById(@PathVariable long id) {
+
         return ResponseEntity.ok(productService.getById(id));
     }
 
-    @GetMapping()
+    @GetMapping("get-all")
     ResponseEntity<List<Product>> getAll() {
+
         return ResponseEntity.ok(productService.getAll());
     }
 
     @PostMapping
-    ResponseEntity<Product> create(@RequestBody Product product) {
-        if (!ProductValidator.validateCreateProduct(product)) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "user data is invalid to create product"
-            );
+    ResponseEntity<ResponseDto> create(@RequestBody Product product,
+                                       @RequestHeader String userId){
+        if(!ProductValidator.validateCreateProduct(product, userId)){
+            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "user data is invalid to create product");
         }
-        return ResponseEntity.ok(productService.create(product));
+        Product created = productService.create(product);
+        ResponseDto responseDto = new ResponseDto("Product created.");
+        responseDto.addInfo("productId", String.valueOf(created.getId()));
+        return ResponseEntity.ok(responseDto);
     }
 
+
     @PutMapping("/{id}")
-    ResponseEntity<Product> update(@PathVariable long id, @RequestBody Product product) {
-        if (!ProductValidator.validateUpdateProduct(product)) {
+    ResponseEntity<ResponseDto> update(@PathVariable Long id,
+                                       @RequestBody Product product,
+                                       @RequestHeader String userId){
+        if (!ProductValidator.validateUpdateProduct(product, userId)) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "user data is invalid to update product with id:" + id
             );
         }
-        return ResponseEntity.ok(productService.update(id, product));
+        Product updated = productService.update(product, id);
+        ResponseDto responseDto = new ResponseDto("Product updated.");
+        responseDto.addInfo("productId", String.valueOf(updated.getId()));
+        return ResponseEntity.ok(responseDto);
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> delete(@PathVariable long id) {
+    ResponseEntity<ResponseDto> delete(@PathVariable long id, @RequestHeader String userId){
+        if (!ProductValidator.validateDeleteProduct(userId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "user is unauthorized, please sign in first:"
+            );
+        }
+        imageService.delete(id);
         productService.delete(id);
-        return ResponseEntity.ok().build();
+        ResponseDto responseDto = new ResponseDto("Product deleted.");
+        responseDto.addInfo("productId", String.valueOf(id));
+        return ResponseEntity.ok(responseDto);
     }
+
 
 }

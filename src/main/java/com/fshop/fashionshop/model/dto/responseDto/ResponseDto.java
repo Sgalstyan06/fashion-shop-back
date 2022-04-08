@@ -27,26 +27,32 @@ public class ResponseDto {
     }
 
     public HttpStatus getHttpStatus() {
+
         return httpStatus;
     }
 
     public void setHttpStatus(HttpStatus httpStatus) {
+
         this.httpStatus = httpStatus;
     }
 
     public String getMessage() {
+
         return message;
     }
 
     public void setMessage(String message) {
+
         this.message = message;
     }
 
     public Map<String, String> getInfo() {
+
         return info;
     }
 
     public void addInfo(String key,String value){
+
         info.put(key, value);
     }
 

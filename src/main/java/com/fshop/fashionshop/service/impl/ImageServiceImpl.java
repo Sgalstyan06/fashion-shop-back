@@ -3,8 +3,10 @@ package com.fshop.fashionshop.service.impl;
 import com.fshop.fashionshop.model.Product;
 import com.fshop.fashionshop.model.commons.Image;
 import com.fshop.fashionshop.repository.ImageRepository;
+import com.fshop.fashionshop.repository.ProductRepository;
 import com.fshop.fashionshop.service.ImageService;
 import com.fshop.fashionshop.service.ProductService;
+import com.fshop.fashionshop.util.FileConstants;
 import com.fshop.fashionshop.util.FileDatasource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,29 +35,31 @@ public class ImageServiceImpl implements ImageService {
     private ProductService productService;
 
     @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
     private ImageRepository imageRepository;
 
     @Override
     @Transactional
-    public Product saveImagesToFolder(long productId, MultipartFile[] images) {
-
+    public Product saveImagesToFolder(long productId, MultipartFile[] images, String serverUrl) {
+// get product by id
         Product product = productService.getById(productId);
         List<Image> imagesForDb = new LinkedList<>();
-
+// create directory
         FileDatasource fileDatasource = new FileDatasource();
         String productFolder = fileDatasource.createProductFolder(generateFolderName(product));
 
-
+// iterate for any image
         for (MultipartFile image : images) {
 
             String fileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
             Path uploadDirectory = Paths.get(productFolder);
-            String imagePath = productFolder + File.separator + fileName;
-            System.out.println("imagePath\t" + imagePath);
-            imagesForDb.add(new Image(imagePath));
+            String imgUrl = serverUrl + "/" + generateFolderName(product) + "/" + fileName;
+//            System.out.println("imagePath\t" + imagePath);
+            imagesForDb.add(new Image(imgUrl));
             try (InputStream inputStream = image.getInputStream()) {
                 Path filePath = uploadDirectory.resolve(fileName);
-
                 Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
                 try {
@@ -65,28 +69,39 @@ public class ImageServiceImpl implements ImageService {
                 }
             }
         }
-        product.getImg().addAll(imagesForDb);
+
+        if (product.getImg() == null){
+            product.setImg(imagesForDb);
+        }else {
+            product.getImg().addAll(imagesForDb);
+        }
 
         return product;
     }
 
     @Override
-    public byte[] readAllByProductId(long productId, long imgId) throws IOException {
+    public byte[] readByFolderNameAndImageName(String folderName, String imageName) throws IOException {
+        //get file
+        File file = new File(
+                new File("").getAbsolutePath() +
+                        File.separator +
+                        FileConstants.DATA_FOLDER_NAME +
+                        File.separator +
+                        folderName +
+                        File.separator +
+                        imageName
+        );
 
-        Image image = null;
-        for (Image item : productService.getById(productId).getImg()) {
-            if (item.getId() == imgId) {
-                image = item;
-                break;
-            }
-        }
-        InputStream inputStream = new FileInputStream(new File(image.getImagePath()));
+        InputStream inputStream = new FileInputStream(file);
         return StreamUtils.copyToByteArray(inputStream);
 
     }
 
-    @Transactional
+
+
+
     @Override
+    @Transactional
     public Image update(long productId, MultipartFile[] images) {
         Product fromDb = productService.getById(productId);
         FileDatasource fileDatasource = new FileDatasource();
@@ -122,13 +137,17 @@ public class ImageServiceImpl implements ImageService {
         return null;
     }
 
-
     @Override
-    public void delete(MultipartFile file) {
+    public void delete(long id) {
+        new FileDatasource().deleteProductFolderByFolderName(generateFolderName(productRepository.getById(id)));
 
     }
 
+
+
+
     private String generateFolderName(Product product) {
+
         return product.getName() + "_" + product.getId();
     }
 }
