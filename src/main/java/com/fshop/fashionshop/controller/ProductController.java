@@ -29,7 +29,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.getById(id));
     }
 
-    @GetMapping("get-all")
+    @GetMapping()
     ResponseEntity<List<Product>> getAll() {
 
         return ResponseEntity.ok(productService.getAll());

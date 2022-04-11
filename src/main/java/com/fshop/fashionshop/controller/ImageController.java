@@ -1,5 +1,6 @@
 package com.fshop.fashionshop.controller;
 
+import com.fshop.fashionshop.model.Product;
 import com.fshop.fashionshop.model.commons.Image;
 import com.fshop.fashionshop.model.dto.responseDto.ResponseDto;
 import com.fshop.fashionshop.service.ImageService;
@@ -27,9 +28,9 @@ public class ImageController {
     private ProductService productService;
 
     @PostMapping("/add/{product_id}")
-    void addImage(@PathVariable("product_id") long productId,
-                  @RequestParam("image") MultipartFile[] multipartFile,
-                  @RequestHeader String userId) {
+    ResponseEntity<ResponseDto> addImage(@PathVariable("product_id") long productId,
+                                         @RequestParam("image") MultipartFile[] multipartFile,
+                                         @RequestHeader String userId) {
         if (!UserValidator.checkUserAuthorized(userId)) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
@@ -39,7 +40,10 @@ public class ImageController {
         String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
         String requestMapping = this.getClass().getAnnotation(RequestMapping.class).value()[0];
         String imageMappingPath = serverUrl+ "/" +requestMapping + IMAGE_URL_MAPPING_POST_FIX;
-        imageService.saveImagesToFolder(productId, multipartFile, imageMappingPath );
+        Product created = imageService.saveImagesToFolder(productId, multipartFile, imageMappingPath);
+        ResponseDto responseDto = new ResponseDto("Image created.");
+        responseDto.addInfo("productId", String.valueOf(productId));
+        return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping(value =  "/get/{folder_name}/{img_name}")
@@ -62,7 +66,10 @@ public class ImageController {
                     "user is unauthorized, please sign in first:"
             );
         }
-        Image updated = imageService.update(productId, images);
+        String serverUrl = ServletUriComponentsBuilder.fromCurrentContextPath().toUriString();
+        String requestMapping = this.getClass().getAnnotation(RequestMapping.class).value()[0];
+        String imageMappingPath = serverUrl+ "/" +requestMapping + IMAGE_URL_MAPPING_POST_FIX;
+        Image updated = imageService.update(productId, images, imageMappingPath);
         System.out.println(updated);
         ResponseDto responseDto = new ResponseDto("Image updated.");
         responseDto.addInfo("productId", String.valueOf(productId));

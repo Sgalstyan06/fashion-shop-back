@@ -102,7 +102,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     @Transactional
-    public Image update(long productId, MultipartFile[] images) {
+    public Image update(long productId, MultipartFile[] images, String serverUrl) {
         Product fromDb = productService.getById(productId);
         FileDatasource fileDatasource = new FileDatasource();
         fileDatasource.deleteProductFolderByFolderName(generateFolderName(fromDb));
@@ -120,8 +120,9 @@ public class ImageServiceImpl implements ImageService {
 
             String fileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
             Path uploadDirectory = Paths.get(productFolder);
-            String imagePath = productFolder + File.separator + fileName;
-            imagesForDb.add(new Image(imagePath));
+            String imgUrl = serverUrl + "/" + generateFolderName(fromDb) + "/" + fileName;
+//            System.out.println("imagePath\t" + imagePath);
+            imagesForDb.add(new Image(imgUrl));
             try (InputStream inputStream = image.getInputStream()) {
                 Path filePath = uploadDirectory.resolve(fileName);
                 Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
