@@ -19,6 +19,11 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
+    /***
+     *
+     * @param user is made from the information provided by front-end that will be registered in database
+     * @return responseDto to inform front-end that process has been done successfully/ failed
+     */
     @PostMapping("/signup")
     ResponseEntity<ResponseDto> signUp(@RequestBody User user) {
 

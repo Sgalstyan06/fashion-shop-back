@@ -23,18 +23,36 @@ public class ProductController {
     @Autowired
     private ImageService imageService;
 
+    /***
+     *
+     * @param id is used to find the corresponding product with current id
+     * @return the necessary product by provided id
+     */
     @GetMapping("/{id}")
     ResponseEntity<Product> getById(@PathVariable long id) {
 
         return ResponseEntity.ok(productService.getById(id));
     }
 
+    /***
+     *
+     * @return  all products
+     */
     @GetMapping()
     ResponseEntity<List<Product>> getAll() {
 
         return ResponseEntity.ok(productService.getAll());
     }
 
+    /***
+     *
+     * @param product  is made from the provided information by front-end which includes
+     *                  •name
+     *                  •price
+     *                  •additional product details
+     * @param userId property is used to determine if the user has authorisation to make changes in database
+     * @return responseDto to inform front-end that process has been done successfully/ failed
+     */
     @PostMapping
     ResponseEntity<ResponseDto> create(@RequestBody Product product,
                                        @RequestHeader String userId){
@@ -48,7 +66,13 @@ public class ProductController {
         return ResponseEntity.ok(responseDto);
     }
 
-
+    /***
+     *
+     * @param id is to get the necessary product which will be updated
+     * @param product is the new information to update product
+     * @param userId property is used to determine if the user has authorisation to make changes in database
+     * @return responseDto to inform front-end that process has been done successfully/ failed
+     */
     @PutMapping("/{id}")
     ResponseEntity<ResponseDto> update(@PathVariable Long id,
                                        @RequestBody Product product,
@@ -65,6 +89,12 @@ public class ProductController {
         return ResponseEntity.ok(responseDto);
     }
 
+    /***
+     *
+     * @param id is to find the product which will be deleted
+     * @param userId property is used to determine if the user has authorisation to make changes in database
+     * @return responseDto to inform front-end that process has been done successfully/ failed
+     */
     @DeleteMapping("/{id}")
     ResponseEntity<ResponseDto> delete(@PathVariable long id, @RequestHeader String userId){
         if (!ProductValidator.validateDeleteProduct(userId)) {

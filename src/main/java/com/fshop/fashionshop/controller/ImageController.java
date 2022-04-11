@@ -27,6 +27,13 @@ public class ImageController {
     @Autowired
     private ProductService productService;
 
+    /***
+     *
+     * @param productId  property is used to determine for what product will be added @param  productId
+     * @param multipartFile property is used to catch uploaded images from front-end
+     * @param userId property is used to determine if the user has authorisation to make changes in database
+     * @return responseDto to inform front-end that process has been done successfully/ failed
+     */
     @PostMapping("/add/{product_id}")
     ResponseEntity<ResponseDto> addImage(@PathVariable("product_id") long productId,
                                          @RequestParam("image") MultipartFile[] multipartFile,
@@ -46,6 +53,13 @@ public class ImageController {
         return ResponseEntity.ok(responseDto);
     }
 
+    /***
+     *
+     * @param folderName property is used to get the image with predefined folder
+     * @param imageName property is used to get the image with specific name
+     * @return byte[] value is file information which will be send to front-end
+     * @throws IOException can be thrown if something goes wrong with @param in File System
+     */
     @GetMapping(value =  "/get/{folder_name}/{img_name}")
     ResponseEntity<byte[]> getImagesByProductId(@PathVariable("folder_name") String folderName,
                                                 @PathVariable("img_name") String imageName) throws IOException {
@@ -56,6 +70,13 @@ public class ImageController {
                 .body(imageService.readByFolderNameAndImageName(folderName, imageName));
     }
 
+    /***
+     *
+     * @param productId property is used to determine for what product will be updated @param  productId
+     * @param images property is used to get the image file that will be uploaded to update the current image
+     * @param userId property is used to determine if the user has authorisation to make changes in database
+     * @return responseDto to inform front-end that process has been done successfully/ failed
+     */
     @PutMapping("/update/{product_id}")
     ResponseEntity<ResponseDto> update(@PathVariable("product_id") long productId,
                                        @RequestParam("image") MultipartFile[] images,

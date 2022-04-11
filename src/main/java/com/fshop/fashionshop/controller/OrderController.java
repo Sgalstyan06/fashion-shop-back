@@ -23,11 +23,21 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    /***
+     *
+     * @return all orders
+     */
     @GetMapping("get-all")
     ResponseEntity<List<Order>> getAll() {
+
         return ResponseEntity.ok(orderService.getAll());
     }
 
+    /***
+     *
+     * @param userId is used to get all the orders made by current user
+     * @return returns to front-end all the orders by current user,if process has been done authorized/ unauthorized
+     */
     @GetMapping("/user-order")
     ResponseEntity<List<Order>> getOrdersByUserId(@RequestHeader String userId) {
 
@@ -41,6 +51,12 @@ public class OrderController {
 
     }
 
+    /***
+     *
+     * @param userId is used to get all the orders made by current user
+     * @param orderStatus is used to get orders with this mentioned status
+     * @return returns an array of orders that matched provided user id and order status
+     */
     @GetMapping("/order-status")
     ResponseEntity<List<Order>> getOrderByStatus(@RequestHeader String userId,
                                                  @RequestHeader("status") OrderStatus orderStatus){
@@ -54,6 +70,15 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderByStatus(userId, orderStatus));
     }
 
+    /***
+     *
+     * @param order is made from the provided information by front-end which includes
+     *            •product
+     *            •user
+     *            •additional order details
+     * @param userId property is used to determine if the user has authorisation to make changes in database
+     * @return responseDto to inform front-end that process has been done successfully/ failed
+     */
     @PostMapping
     ResponseEntity<ResponseDto> create(@RequestBody Order order,
                                        @RequestHeader String userId) {
@@ -69,6 +94,14 @@ public class OrderController {
         return ResponseEntity.ok(responseDto);
     }
 
+    /***
+     *
+     * @param userId property is used to determine if the user has authorisation to make changes in database
+     * @param orderId is to get the necessary order which status will be changed
+     * @param orderStatus is the new status for the current order
+     * @return responseDto to inform front-end that process has been done successfully/ failed
+     *
+     */
     @PutMapping("/change-status/{order_id}/{status}")
     ResponseEntity<ResponseDto> changeStatus(@RequestHeader("user_id") String userId,
                                              @PathVariable("order_id") Long orderId,
@@ -85,6 +118,12 @@ public class OrderController {
         return ResponseEntity.ok(responseDto);
     }
 
+    /***
+     *
+     * @param id is used to find the corresponding order that will be deleted
+     * @param userId property is used to determine if the user has authorisation to make changes in database
+     * @return responseDto to inform front-end that process has been done successfully/ failed
+     */
     @DeleteMapping("/{idOrder}")
     ResponseEntity<ResponseDto> delete(@PathVariable("idOrder") Long id,
                                        @RequestHeader String userId) {
