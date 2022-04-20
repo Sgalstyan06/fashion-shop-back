@@ -11,6 +11,8 @@ public interface UserService {
 
     User getByIdForSingUp(String id);
 
+    boolean isExists(String id);
+
     List<User> getAll();
 
     void delete(String id);

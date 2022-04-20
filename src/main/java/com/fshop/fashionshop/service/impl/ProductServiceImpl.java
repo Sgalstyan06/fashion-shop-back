@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -40,8 +41,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getAll() {
-
-        return productRepository.findAll();
+        List<Product> all = productRepository.findAll();
+        Collections.reverse(all);
+        return all;
+//        return productRepository.findAll();
     }
 
 

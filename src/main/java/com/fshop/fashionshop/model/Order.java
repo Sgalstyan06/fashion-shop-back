@@ -30,10 +30,10 @@ public class Order {
     @ManyToOne
     private User user;
 
-//    private String address;
-//
-//    private String phone;
-//
+    private String address;
+
+    private String phone;
+
 //    @Enumerated(EnumType.STRING)
 //    private PaymentMethod paymentMethod;
 }
