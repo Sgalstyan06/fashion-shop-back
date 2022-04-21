@@ -1,9 +1,11 @@
 package com.fshop.fashionshop.service.impl;
 
 import com.fshop.fashionshop.model.Order;
+import com.fshop.fashionshop.model.Product;
 import com.fshop.fashionshop.model.commons.enums.OrderStatus;
 import com.fshop.fashionshop.repository.OrderRepository;
 import com.fshop.fashionshop.service.OrderService;
+import com.fshop.fashionshop.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,12 +23,16 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private ProductService productService;
+
 
     @Override
     public Order create(Order order) {
-
+        order.setOrderStatus(OrderStatus.PENDING);
         return orderRepository.save(order);
     }
+
 
     @Override
     public List<Order> getAllById(String id) {
@@ -63,6 +69,8 @@ public class OrderServiceImpl implements OrderService {
         Order fromDb = orderRepository.findById(orderId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "Order with id:" + orderId + "  not found in database"));
+        Product product = productService.getById(fromDb.getProduct().getId());
+        product.updateStock(fromDb.getOrderStatus(), orderStatus, fromDb.getCount());
         fromDb.setOrderStatus(orderStatus);
     }
 
