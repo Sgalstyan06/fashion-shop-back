@@ -27,23 +27,25 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductService productService;
 
-
+    /***
+     *
+     * @param order is the product that will be added in DB
+     * @return new product which has added
+     */
     @Override
     public Order create(Order order) {
         order.setOrderStatus(OrderStatus.PENDING);
         return orderRepository.save(order);
     }
 
-
+    /***
+     *
+     * @param id with the help of it will find the object from DB.
+     * @return returns founded object or throws @ResponseStatusException(BAD_REQUEST).
+     */
     @Override
     public List<Order> getAllById(String id) {
-//        return orderRepository
-//                .getAllByUserId(id)
-//                .orElseThrow(() -> new ResponseStatusException(
-//                        HttpStatus.BAD_REQUEST,
-//                        "Orders with user_id:" + id + "  not found in database")
-//                );
-        //I write to reverse List
+
         List<Order> userOrders = orderRepository.getAllByUserId(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
@@ -53,6 +55,10 @@ public class OrderServiceImpl implements OrderService {
         return userOrders;
     }
 
+    /***
+     *
+     * @return all data from DB, if there is not any data will return empty List.
+     */
     @Override
     public List<Order> getAll() {
         List<Order> allOrder = orderRepository.findAll();
@@ -60,13 +66,23 @@ public class OrderServiceImpl implements OrderService {
         return allOrder;
     }
 
-
+    /***
+     *
+     * @param id find the order with provided id and deletes it
+     */
     @Override
     public void delete(Long id) {
 
         orderRepository.deleteById(id);
     }
 
+    /***
+     *
+     * @param userId property is used to determine if the user
+     *               has authorisation to get orders by provided status from DB
+     * @param orderStatus is the provided status
+     * @return all the orders that satisfied the request's conditions
+     */
     @Override
     public List<Order> getOrderByStatus(String userId, OrderStatus orderStatus) {
         return getAllById(userId).stream()
@@ -74,6 +90,11 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toList());
     }
 
+    /***
+     *
+     * @param orderId finds the necessary order from DB by provided orderId
+     * @param orderStatus change the status of the found order
+     */
     @Override
     @Transactional
     public void changeStatus(Long orderId, OrderStatus orderStatus) {

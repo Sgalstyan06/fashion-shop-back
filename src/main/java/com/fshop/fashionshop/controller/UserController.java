@@ -2,7 +2,6 @@ package com.fshop.fashionshop.controller;
 
 import com.fshop.fashionshop.model.User;
 import com.fshop.fashionshop.model.dto.responseDto.ResponseDto;
-import com.fshop.fashionshop.repository.UserRepository;
 import com.fshop.fashionshop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,11 +17,14 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-//    UserRepository userRepository;
-    UserService userService;
 
+    UserService userService;
+    /***
+     *
+     * @return returns the list of all registered users
+     */
     @GetMapping
-    List<User> getAll(){
+    List<User> getAll() {
 
         return userService.getAll();
     }

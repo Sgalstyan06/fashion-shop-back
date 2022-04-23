@@ -40,23 +40,30 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageRepository imageRepository;
 
+    /***
+     *
+     * @param productId finds the product that will be attached with image
+     * @param images corresponding images that will be uploaded
+     * @param serverUrl  current server where our page is hoisting
+     * @return returns the product with images attached
+     */
     @Override
     @Transactional
     public Product saveImagesToFolder(long productId, MultipartFile[] images, String serverUrl) {
-// get product by id
+
         Product product = productService.getById(productId);
         List<Image> imagesForDb = new LinkedList<>();
-// create directory
+
         FileDatasource fileDatasource = new FileDatasource();
         String productFolder = fileDatasource.createProductFolder(generateFolderName(product));
 
-// iterate for any image
+
         for (MultipartFile image : images) {
 
             String fileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
             Path uploadDirectory = Paths.get(productFolder);
             String imgUrl = serverUrl + "/" + generateFolderName(product) + "/" + fileName;
-//            System.out.println("imagePath\t" + imagePath);
+
             imagesForDb.add(new Image(imgUrl));
             try (InputStream inputStream = image.getInputStream()) {
                 Path filePath = uploadDirectory.resolve(fileName);
@@ -79,6 +86,14 @@ public class ImageServiceImpl implements ImageService {
         return product;
     }
 
+
+    /***
+     *
+     * @param folderName is the name of the folder where the product is located
+     * @param imageName is the name of the image
+     * @return convert the file to an array of bytes and returns it
+     * @throws IOException throws exception when the process has failed
+     */
     @Override
     public byte[] readByFolderNameAndImageName(String folderName, String imageName) throws IOException {
         //get file
@@ -99,7 +114,13 @@ public class ImageServiceImpl implements ImageService {
 
 
 
-
+    /***
+     *
+     * @param productId finds the product which image will be updated
+     * @param images the new images that will be uploaded
+     * @param serverUrl current server where our page is hoisting
+     * @return
+     */
     @Override
     @Transactional
     public Image update(long productId, MultipartFile[] images, String serverUrl) {
@@ -138,6 +159,11 @@ public class ImageServiceImpl implements ImageService {
         return null;
     }
 
+    /***
+     *
+     * @param id find the product with provided id and deletes both the image folder
+     *           corresponding to the product and the product
+     */
     @Override
     public void delete(long id) {
         new FileDatasource().deleteProductFolderByFolderName(generateFolderName(productRepository.getById(id)));
@@ -146,7 +172,11 @@ public class ImageServiceImpl implements ImageService {
 
 
 
-
+    /***
+     *
+     * @param product creates the image folder depending on the provided product name and product id
+     * @return generated folder name
+     */
     private String generateFolderName(Product product) {
 
         return product.getName() + "_" + product.getId();

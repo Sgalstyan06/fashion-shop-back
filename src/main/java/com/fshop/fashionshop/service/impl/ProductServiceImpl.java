@@ -22,13 +22,21 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-
+    /***
+     *
+     * @param product the product that would be added in DB
+     * @return new product which has added
+     */
     @Override
     public Product create(Product product) {
 
         return productRepository.save(product);
     }
 
+    /***
+     *
+     * @return the product with provided ID
+     */
     @Override
     public Product getById(long id) {
         return productRepository
@@ -39,15 +47,25 @@ public class ProductServiceImpl implements ProductService {
                 );
     }
 
+    /***
+     *
+     * @return all data from DB, if there is not any data will return empty List.
+     */
     @Override
     public List<Product> getAll() {
         List<Product> all = productRepository.findAll();
         Collections.reverse(all);
         return all;
-//        return productRepository.findAll();
+
     }
 
 
+    /***
+     *
+     * @param id is related to product which need to update
+     * @param product is changed data
+     * @returns just updated product
+     */
     @Override
     @Transactional
     public Product update(Product product, long id) {
@@ -64,6 +82,11 @@ public class ProductServiceImpl implements ProductService {
         return  dbProduct;
     }
 
+    /***
+     *
+     * @param id find the product with provided id and deletes both the image folder
+     *           corresponding to the product and the product
+     */
     @Override
     public void delete(long id) {
 
