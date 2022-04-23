@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,17 +37,27 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> getAllById(String id) {
-        return orderRepository
-                .getAllByUserId(id)
+//        return orderRepository
+//                .getAllByUserId(id)
+//                .orElseThrow(() -> new ResponseStatusException(
+//                        HttpStatus.BAD_REQUEST,
+//                        "Orders with user_id:" + id + "  not found in database")
+//                );
+        //I write to reverse List
+        List<Order> userOrders = orderRepository.getAllByUserId(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
                         "Orders with user_id:" + id + "  not found in database")
                 );
+        Collections.reverse(userOrders);
+        return userOrders;
     }
 
     @Override
     public List<Order> getAll() {
-        return orderRepository.findAll();
+        List<Order> allOrder = orderRepository.findAll();
+        Collections.reverse(allOrder);
+        return allOrder;
     }
 
 
@@ -59,7 +70,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<Order> getOrderByStatus(String userId, OrderStatus orderStatus) {
         return getAllById(userId).stream()
-                .filter(item->item.getOrderStatus()==orderStatus)
+                .filter(item -> item.getOrderStatus() == orderStatus)
                 .collect(Collectors.toList());
     }
 
